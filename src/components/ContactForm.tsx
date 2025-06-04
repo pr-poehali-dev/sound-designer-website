@@ -26,8 +26,40 @@ const ContactForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Здесь будет интеграция с CRM
-    console.log("Form submitted:", formData);
+
+    // Формируем данные для отправки в Formspree
+    const formDataToSubmit = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      formDataToSubmit.append(key, value);
+    });
+
+    // Отправляем на Formspree (бесплатная CRM)
+    fetch("https://formspree.io/f/xpzgkrpn", {
+      method: "POST",
+      body: formDataToSubmit,
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          alert("Заявка отправлена! Свяжусь с вами в течение дня.");
+          setFormData({
+            name: "",
+            email: "",
+            phone: "",
+            service: "",
+            budget: "",
+            timeline: "",
+            message: "",
+          });
+        } else {
+          alert("Ошибка отправки. Попробуйте позже или свяжитесь напрямую.");
+        }
+      })
+      .catch(() => {
+        alert("Ошибка отправки. Попробуйте позже или свяжитесь напрямую.");
+      });
   };
 
   const contactInfo = [
